@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"todo-api/handlers/health_check"
-	"todo-api/server"
+	"service_boilter_plate/handlers/health_check"
+	"service_boilter_plate/server"
 )
 
 //var	 (
@@ -21,12 +21,12 @@ func main() {
 	mux := http.NewServeMux()
 
 	hcHandler := health_check.NewHandler(logger)
-	mux.HandleFunc("/health-check", hcHandler.HealthCheck)
+	hcHandler.SetupRoutes(mux)
 
 	svr := server.New(Port, mux)
 
 	log.Printf("starting the service on port: %s", Port)
-	if err := svr.ListenAndServe(); err != nil {
+	if err := svr.ListenAndServeTLS("", ""); err != nil {
 		log.Fatalln(err)
 	}
 }
