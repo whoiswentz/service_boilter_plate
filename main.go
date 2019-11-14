@@ -4,8 +4,9 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"service_boilter_plate/handlers/health_check"
-	"service_boilter_plate/server"
+	"todo-api/db"
+	"todo-api/handlers"
+	"todo-api/server"
 )
 
 //var	 (
@@ -16,17 +17,18 @@ const Port = ":8080"
 
 func main() {
 	logFlags := log.LstdFlags | log.Lshortfile
-	logger := log.New(os.Stdout, "API", logFlags)
+	logger := log.New(os.Stdout, "API - ", logFlags)
 
 	mux := http.NewServeMux()
 
-	hcHandler := health_check.NewHandler(logger)
-	hcHandler.SetupRoutes(mux)
+	db := db.OpenConnection("", "")
 
+	handler := handlers.NewHandler(logger, db)
+	handler.SetupRoutes(mux)
 	svr := server.New(Port, mux)
 
 	log.Printf("starting the service on port: %s", Port)
-	if err := svr.ListenAndServeTLS("", ""); err != nil {
+	if err := svr.ListenAndServe(); err != nil {
 		log.Fatalln(err)
 	}
 }

@@ -3,7 +3,7 @@ package server
 import (
 	"net/http"
 	"time"
-	"config"
+	"todo-api/config"
 )
 
 func New(port string, mux *http.ServeMux) *http.Server {
