@@ -4,26 +4,22 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"todo-api/db"
-	"todo-api/handlers"
-	"todo-api/server"
+	"service_boilter_plate/db"
+	"service_boilter_plate/handlers"
+	"service_boilter_plate/server"
 )
 
-//var	 (
-//	Port = os.Getenv("SERVICE_PORT")
-//)
-
-const Port = ":8080"
+var (
+	Port = os.Getenv("SERVICE_PORT")
+)
 
 func main() {
 	logFlags := log.LstdFlags | log.Lshortfile
 	logger := log.New(os.Stdout, "API - ", logFlags)
 
 	mux := http.NewServeMux()
-
-	db := db.OpenConnection("", "")
-
-	handler := handlers.NewHandler(logger, db)
+	conn := db.OpenConnection("postgres")
+	handler := handlers.NewHandler(logger, conn)
 	handler.SetupRoutes(mux)
 	svr := server.New(Port, mux)
 

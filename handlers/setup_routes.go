@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"net/http"
-	"todo-api/middleware"
+	"service_boilter_plate/middleware"
 )
 
 func (h *Handler) SetupRoutes(mux *http.ServeMux) {

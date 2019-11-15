@@ -2,8 +2,8 @@ package server
 
 import (
 	"net/http"
+	"service_boilter_plate/config"
 	"time"
-	"todo-api/config"
 )
 
 func New(port string, mux *http.ServeMux) *http.Server {
