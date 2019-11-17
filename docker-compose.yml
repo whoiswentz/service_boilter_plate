@@ -1,0 +1,47 @@
+version: '3.7'
+
+networks:
+  tasknet:
+    driver: bridge
+
+services:
+  database-mongo:
+    image: mongo:latest
+    container_name: task_db
+    environment:
+      - MONGO_INITDB_DATABASE=task
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+    ports:
+      - 27017-27019:27017-27019
+    networks:
+      - tasknet
+
+  redis:
+    image: redis:latest
+    container_name: task_cache
+    ports:
+      - 6379:6379
+    networks:
+      - tasknet
+
+  taskapi:
+    image: whoiswentz/taskapi:v1
+    container_name: taskapi_v1
+    hostname: whoiswentz
+    build:
+      dockerfile: Dockerfile
+      context: .
+    environment:
+      - GOMAXPROCS=2
+      - CGO_ENABLED=0
+      - SERVICE_PORT=:8080
+    networks:
+      - tasknet
+    ports:
+      - 8080:8080
+    depends_on:
+      - database
+      - redis
+    links:
+      - database
