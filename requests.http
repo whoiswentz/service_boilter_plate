@@ -9,3 +9,13 @@
 GET http://localhost:8080/health-check
 
 ###
+
+POST http://localhost:8080/task
+Content-Type: application/json
+
+{
+  "title": "crazy task",
+  "description": "the craziest task"
+}
+
+###
