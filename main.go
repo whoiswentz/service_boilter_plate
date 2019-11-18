@@ -1,11 +1,12 @@
 package main
 
 import (
+	"github.com/go-redis/redis/v7"
 	"log"
 	"net/http"
 	"os"
-	"service_boilter_plate/handlers"
-	"service_boilter_plate/server"
+	"task_golang_api/handlers"
+	"task_golang_api/server"
 )
 
 var (
@@ -24,6 +25,12 @@ func main() {
 	if Port == "" {
 		Port = ":8080"
 	}
+
+	redisClient := redis.NewClient(&redis.Options{
+		Addr: "localhost:6379",
+		Password: "",
+		DB: 0,
+	})
 
 	svr := server.New(Port, mux)
 	log.Printf("starting the service on port: %s", Port)

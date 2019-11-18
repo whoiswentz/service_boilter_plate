@@ -2,7 +2,7 @@ package server
 
 import (
 	"net/http"
-	"service_boilter_plate/config"
+	"task_golang_api/config"
 	"time"
 )
 
