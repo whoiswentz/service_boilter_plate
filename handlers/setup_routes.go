@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"net/http"
-	"task_golang_api/middleware"
+	"task/middleware"
 )
 
 func (h *Handler) SetupRoutes(mux *http.ServeMux) {

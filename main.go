@@ -1,12 +1,13 @@
 package main
 
 import (
-	"github.com/go-redis/redis/v7"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"task_golang_api/handlers"
-	"task_golang_api/server"
+	"task/db"
+	"task/handlers"
+	"task/server"
 )
 
 var (
@@ -18,23 +19,14 @@ func main() {
 	logger := log.New(os.Stdout, "API - ", logFlags)
 
 	mux := http.NewServeMux()
-	//conn := db.OpenConnection("postgres")
-	handler := handlers.NewHandler(logger, nil)
+	mongo := db.OpenConnection("postgres")
+	//redis := db.NewRedisConnection("redis")
+	handler := handlers.NewHandler(mongo, nil)
 	handler.SetupRoutes(mux)
 
-	if Port == "" {
-		Port = ":8080"
-	}
-
-	redisClient := redis.NewClient(&redis.Options{
-		Addr: "localhost:6379",
-		Password: "",
-		DB: 0,
-	})
-
-	svr := server.New(Port, mux)
-	log.Printf("starting the service on port: %s", Port)
+	svr := server.New(fmt.Sprintf(":%v", Port), mux)
+	logger.Printf("starting the service on port: %s", Port)
 	if err := svr.ListenAndServe(); err != nil {
-		log.Fatalln(err)
+		logger.Fatalln(err)
 	}
 }

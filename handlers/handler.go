@@ -1,16 +1,16 @@
 package handlers
 
 import (
-	"database/sql"
-	"log"
+	"github.com/go-redis/redis"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Handler struct {
-	logger *log.Logger
-	db     *sql.DB
+	cache  *redis.Client
+	db     *mongo.Database
 }
 
 // Kind of dependency injection
-func NewHandler(logger *log.Logger, db *sql.DB) *Handler {
-	return &Handler{logger: logger, db: db}
+func NewHandler(db *mongo.Database, cache *redis.Client) *Handler {
+	return &Handler{db: db, cache: cache}
 }

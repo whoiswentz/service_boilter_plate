@@ -1,34 +1,40 @@
 package db
 
 import (
-	"database/sql"
+	"context"
 	"fmt"
-	_ "github.com/lib/pq"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"os"
+	"time"
 )
 
 var (
-	Host     = os.Getenv("DB_HOST")
-	Port     = os.Getenv("DB_PORT")
-	User     = os.Getenv("DB_USER")
-	Password = os.Getenv("DB_PASSWORD")
-	Name     = os.Getenv("DB_DATABASE")
+	MongoHost = os.Getenv("MONGO_HOST")
+	MongoPort = os.Getenv("MONGO_PORT")
 )
 
-func OpenConnection(driverName string) *sql.DB {
-	connString := "host=%s port=%s user=%s password=%s dbname=%s sslmode=disable"
-	dataSourceName := fmt.Sprintf(connString, Host, Port, User, Password, Name)
-	log.Println(dataSourceName)
-	db, err := sql.Open(driverName, dataSourceName)
+func OpenConnection(dbName string) *mongo.Database {
+	logFlags := log.LstdFlags | log.Lshortfile
+	logger := log.New(os.Stdout, "MONGO - ", logFlags)
+
+	if MongoHost == "" && MongoPort == "" {
+		logger.Fatalln("Mongodb host and port need to be present")
+	}
+
+	uri := fmt.Sprintf("mongodb://root:root@%v:%v", MongoHost, MongoPort)
+	opts := options.Client().ApplyURI(uri)
+	client, err := mongo.NewClient(opts)
 	if err != nil {
-		log.Fatalln(err)
+		logger.Fatalln(err)
 	}
 
-	if err := db.Ping(); err != nil {
-		log.Fatalln(err)
+	logger.Println("Connecting to MongoDB")
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	if err := client.Connect(ctx); err != nil {
+		logger.Fatalf("Error while connecting to MongoDB: %v\n", err)
 	}
 
-	log.Println("Successfully connected!")
-	return db
+	return client.Database("task")
 }

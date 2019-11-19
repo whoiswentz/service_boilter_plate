@@ -2,7 +2,7 @@ package server
 
 import (
 	"net/http"
-	"task_golang_api/config"
+	"task/config"
 	"time"
 )
 
