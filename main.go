@@ -18,10 +18,11 @@ func main() {
 	logFlags := log.LstdFlags | log.Lshortfile
 	logger := log.New(os.Stdout, "API - ", logFlags)
 
+	mongo := db.NewMongoConnection("task")
+	redis := db.NewRedisConnection("redis")
+	handler := handlers.NewHandler(mongo, redis)
+
 	mux := http.NewServeMux()
-	mongo := db.OpenConnection("postgres")
-	//redis := db.NewRedisConnection("redis")
-	handler := handlers.NewHandler(mongo, nil)
 	handler.SetupRoutes(mux)
 
 	svr := server.New(fmt.Sprintf(":%v", Port), mux)

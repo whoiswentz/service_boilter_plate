@@ -13,28 +13,26 @@ import (
 var (
 	MongoHost = os.Getenv("MONGO_HOST")
 	MongoPort = os.Getenv("MONGO_PORT")
+	MongoUser = os.Getenv("MONGO_USER")
+	MongoPass = os.Getenv("MONGO_PASS")
 )
 
-func OpenConnection(dbName string) *mongo.Database {
+func NewMongoConnection(dbName string) *mongo.Database {
 	logFlags := log.LstdFlags | log.Lshortfile
 	logger := log.New(os.Stdout, "MONGO - ", logFlags)
 
-	if MongoHost == "" && MongoPort == "" {
-		logger.Fatalln("Mongodb host and port need to be present")
-	}
-
-	uri := fmt.Sprintf("mongodb://root:root@%v:%v", MongoHost, MongoPort)
+	uri := fmt.Sprintf("mongodb://%v:%v@%v:%v", MongoUser, MongoPass, MongoHost, MongoPort)
 	opts := options.Client().ApplyURI(uri)
 	client, err := mongo.NewClient(opts)
 	if err != nil {
 		logger.Fatalln(err)
 	}
 
-	logger.Println("Connecting to MongoDB")
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	if err := client.Connect(ctx); err != nil {
 		logger.Fatalf("Error while connecting to MongoDB: %v\n", err)
 	}
 
-	return client.Database("task")
+	logger.Printf("Connected %v database", dbName)
+	return client.Database(dbName)
 }
