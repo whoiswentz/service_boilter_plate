@@ -7,10 +7,10 @@ import (
 
 type Handler struct {
 	cache  *redis.Client
-	db     *mongo.Database
+	db     *mongo.Client
 }
 
 // Kind of dependency injection
-func NewHandler(db *mongo.Database, cache *redis.Client) *Handler {
+func NewHandler(db *mongo.Client, cache *redis.Client) *Handler {
 	return &Handler{db: db, cache: cache}
 }

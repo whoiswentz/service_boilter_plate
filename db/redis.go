@@ -22,11 +22,11 @@ func NewRedisConnection(hostname string) *redis.Client {
 		DB:       0,
 	})
 
-	pong, err := client.Ping().Result()
+	_, err := client.Ping().Result()
 	if err != nil {
 		logger.Fatalln(err)
 	}
-	logger.Printf("Connected - %v", pong)
+	logger.Println("Up")
 
 	return client
 }

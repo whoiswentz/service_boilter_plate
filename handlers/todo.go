@@ -32,7 +32,8 @@ func (h *Handler) postTodo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := context.Background()
-	result, err := h.db.Collection("list").InsertOne(ctx, task)
+	database := h.db.Database("task")
+	result, err := database.Collection("list").InsertOne(ctx, task)
 	if err != nil {
 		log.Fatalln(err)
 	}

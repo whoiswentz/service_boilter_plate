@@ -17,7 +17,7 @@ var (
 	MongoPass = os.Getenv("MONGO_PASS")
 )
 
-func NewMongoConnection(dbName string) *mongo.Database {
+func NewMongoConnection(dbName string) *mongo.Client {
 	logFlags := log.LstdFlags | log.Lshortfile
 	logger := log.New(os.Stdout, "MONGO - ", logFlags)
 
@@ -33,6 +33,5 @@ func NewMongoConnection(dbName string) *mongo.Database {
 		logger.Fatalf("Error while connecting to MongoDB: %v\n", err)
 	}
 
-	logger.Printf("Connected %v database", dbName)
-	return client.Database(dbName)
+	return client
 }
